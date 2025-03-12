@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    container_name: app
+    working_dir: /var/www
+    volumes:
+      - ./laravel:/var/www
+      - ./php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - laravel
+    depends_on:
+      - db # ✅ Ensures MySQL starts before Laravel
+
+  webserver:
+    image: nginx:latest
+    container_name: nginx_server
+    ports:
+      - "8200:80"
+    volumes:
+      - ./laravel:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - laravel
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    ports:
+      - "3350:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      # MYSQL_USER: laravel
+      # MYSQL_PASSWORD: laravel
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - laravel
+
+networks:
+  laravel:
+    driver: bridge
+
+volumes:
+  mysql_data:
