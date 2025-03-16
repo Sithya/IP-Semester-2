@@ -30,3 +30,4 @@ Route::controller(ProductController::class)->prefix('products')->group(function(
 // Get all products under a specific category
 Route::get('/categories/{categoryId}/products', [ProductController::class, 'getProductsByCategory']);
 Route::patch('/products/{productId}', [ProductController::class, 'updateProduct']);
+
